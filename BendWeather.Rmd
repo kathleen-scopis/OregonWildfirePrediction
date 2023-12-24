@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+author: "Kathleen Scopis"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(riem)
+library(dplyr)
+library(lubridate)
+
+#riem_networks()
+riem_stations('OR_ASOS')
+```
+
+
+```{r pressure, echo=FALSE}
+
+weather.Panel <- 
+  riem_measures(station = "BDN", date_start = "2020-01-01", date_end = "2022-12-31") %>% 
+  dplyr::select(valid, tmpf, p01i, sknt, dwpf)%>%
+  replace(is.na(.), 0) %>%
+  mutate(interval60 = ymd_h(substr(valid,1,13))) %>%
+  mutate(week = week(interval60),
+         dotw = wday(interval60, label=TRUE)) %>%
+  group_by(interval60) %>%
+  summarize(Temperature = max(tmpf),
+            Precipitation = sum(p01i),
+            Wind_Speed = max(sknt),
+            Dew_Point_Temp = max(dwpf)
+            ) %>%
+  mutate(Temperature = ifelse(Temperature == 0, 42, Temperature))
+
+glimpse(weather.Panel)
+```
+```{r}
+write.csv(weather.Panel, file = "BendWeather.csv", row.names = FALSE)
+```
+
+
+
+
