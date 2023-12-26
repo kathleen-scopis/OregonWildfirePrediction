@@ -22,7 +22,7 @@ riem_stations('OR_ASOS')
 ```{r pressure, echo=FALSE}
 
 weather.Panel <- 
-  riem_measures(station = "BDN", date_start = "2020-01-01", date_end = "2022-12-31") %>% 
+  riem_measures(station = "BDN", date_start = "2014-01-01", date_end = "2015-12-31") %>% 
   dplyr::select(valid, tmpf, p01i, sknt, dwpf)%>%
   replace(is.na(.), 0) %>%
   mutate(interval60 = ymd_h(substr(valid,1,13))) %>%
@@ -38,8 +38,9 @@ weather.Panel <-
 
 glimpse(weather.Panel)
 ```
+
 ```{r}
-write.csv(weather.Panel, file = "BendWeather.csv", row.names = FALSE)
+write.csv(weather.Panel, file = "BendWeather_up.csv", row.names = FALSE)
 ```
 
 
